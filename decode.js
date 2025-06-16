@@ -51,11 +51,11 @@ async function main() {
 
   try {
     const hexArray = parseHexString(input);
-    console.log("Hex Array:           ", toHexArray(hexArray));
+    // console.log("Hex Array:           ", toHexArray(hexArray));
     const encodedPayload = extractPayload(hexArray);
-    console.log("Encoded Payload:     ", toHexArray(encodedPayload));
+    // console.log("Encoded Payload:     ", toHexArray(encodedPayload));
     const decodedBytes = decode7bit(encodedPayload);
-    console.log("Decoded Bytes:       ", toHexArray([...decodedBytes]));
+    // console.log("Decoded Bytes:       ", toHexArray([...decodedBytes]));
 
     const protoPath = path.join(__dirname, "hybrid_mode.proto");
     const root = await protobuf.load(protoPath);
@@ -63,7 +63,10 @@ async function main() {
     const msg = HybridModeMessage.decode(decodedBytes);
     const obj = HybridModeMessage.toObject(msg, { defaults: true });
 
-    console.log("\nDecoded Full Message:");
+    console.log("\n----------------------------------------------------------------");
+    console.log("Input:");
+    console.log(" - ", input, "\n");
+    console.log("Message:");
     console.log(JSON.stringify(obj, null, 2));
 
     // Detect which message is present in oneof `data`
@@ -73,59 +76,30 @@ async function main() {
       return;
     }
 
-    // console.log("\nMessage Type:", dataField);
-
-    // const payload = msg[dataField];
-    // if (typeof payload !== "object") {
-    //   console.log(`Field Value: ${payload}`);
-    // } else {
-    //   console.log("Message Fields:");
-    //   for (const [key, value] of Object.entries(payload)) {
-    //     console.log(`  ${key}: ${value}`);
-    //   }
-    // }
-
-    // if (!payload || typeof payload !== "object") {
-    //   console.log(`Field Value: ${payload}`);
-    // } else {
-    //   console.log("Message Fields:");
-    //   for (const [key, value] of Object.entries(payload)) {
-    //     const field = messageType.fields[key];
-
-    //     if (field && field.resolvedType && field.resolvedType.valuesById) {
-    //       const enumName = field.resolvedType.valuesById[value];
-    //       console.log(`  ${key}: ${enumName} (${value})`);
-    //     } else {
-    //       console.log(`  ${key}: ${value}`);
-    //     }
-    //   }
-    // }
-
-        console.log("\nMessage Type:      ", dataField);
-
+    console.log("\nMessage Type:");
+    console.log(" - ", dataField);
     const payload = msg[dataField];
-    const oneofField = HybridModeMessage.fields[dataField];
-    const messageType = oneofField.resolvedType;
+    const messageType = HybridModeMessage.fields[dataField].resolvedType;
+    const objPayload = obj[dataField];  // object with defaults
 
-    if (!payload || typeof payload !== "object") {
-      console.log(`Message Value: ${payload}`);
-    } else {
-      console.log("Message Fields:");
-      for (const [key, value] of Object.entries(payload)) {
-        const field = messageType?.fields?.[key];
+    console.log("Message Fields:");
+    for (const key of Object.keys(messageType.fields)) {
+      let value = payload ? payload[key] : undefined;
+      if (value === undefined) {
+        // Use default value from obj (which includes defaults)
+        value = objPayload ? objPayload[key] : undefined;
+      }
 
-        if (field?.resolvedType?.valuesById) {
-          // Enum field: resolve name
-          const enumName = field.resolvedType.valuesById[value];
-          console.log(`  ${key}: ${enumName} (${value})`);
-        } else {
-          // Plain field
-          console.log(`  ${key}: ${value}`);
-        }
+      const field = messageType.fields[key];
+      if (field.resolvedType && field.resolvedType.valuesById && typeof value === "number") {
+        const enumName = field.resolvedType.valuesById[value];
+        console.log(" - ", `${key}: ${enumName} (${value})`);
+      } else {
+        console.log(" - ", `${key}: ${value}`);
       }
     }
 
-
+    console.log('\n')
   } catch (err) {
     console.error("Error decoding message:", err.message);
   }
