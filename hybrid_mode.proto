@@ -1,0 +1,174 @@
+syntax = "proto3";
+package remotehostscreen.v1;
+
+option go_package = "gitlab.inmusicbrands.com/cloud/rpc-protos.git/clients/go/remotehostscreen/v1";
+
+message HybridModeMessage {
+    oneof data {
+        KeepAlive keep_alive = 1;
+        Goodbye good_bye = 2;
+        DebugString debug_string = 3;
+        SetPlaylistsHeader set_playlists_header = 10;
+        SetPlaylistsCleared set_playlists_cleared = 11;
+        SetPlaylistsCurrentRow set_playlists_current_row = 12;
+        SetPlaylistsViewportSize set_playlists_viewport_size = 13;
+        SetPlaylistTitle set_playlist_title = 20;
+        SetTracklistCleared set_tracklist_cleared = 30;
+        SetTracklistShowPlayOrder set_tracklist_show_play_order = 31;
+        SetTracklistCurrentRow set_tracklist_current_row = 32;
+        SetTracklistViewportSize set_tracklist_viewport_size = 33;
+        SetTrackTitle set_track_title = 40;
+        SetTrackArtist set_track_artist = 41;
+        SetTrackAlbum set_track_album = 42;
+        SetTrackKey set_track_key = 43;
+        SetTrackTempo set_track_tempo = 44;
+        SetTrackTimeLength set_track_time_length = 45;
+        SetTrackAlbumArt set_track_album_art = 46;
+        SetTrackPlayOrder set_track_play_order = 47;
+        SetAlbumArtImage set_album_art_image = 90;
+        SetFocusArea set_focus_area = 91;
+        LibraryInputSourceChanged library_input_source_changed = 92;
+    }
+}
+
+message KeepAlive {
+    string appName = 1;
+    string appVersion = 2;
+}
+
+message Goodbye {
+}
+
+message DebugString {
+    string message = 1;
+}
+
+message SetPlaylistsHeader {
+    string title = 1;
+}
+
+message SetPlaylistsCurrentRow {
+    optional uint32 rowIndex = 1;
+}
+
+message SetPlaylistsCleared {
+    uint32 fromIndex = 1;
+    uint32 toIndex = 2;
+}
+
+message SetPlaylistsViewportSize {
+    uint32 size = 1;
+}
+
+message SetPlaylistTitle {
+    uint32 rowIndex = 1;
+    string title = 2;
+}
+
+message SetTracklistShowPlayOrder {
+    bool showPlayOrder = 1;
+}
+
+message SetTracklistCleared {
+    uint32 fromIndex = 1;
+    uint32 toIndex = 2;
+}
+
+message SetTracklistCurrentRow {
+    optional uint32 rowIndex = 1;
+}
+
+message SetTracklistViewportSize {
+    uint32 size = 1;
+}
+
+message SetTrackTitle {
+    uint32 rowIndex = 1;
+    string title = 2;
+}
+
+message SetTrackArtist {
+    uint32 rowIndex = 1;
+    string artist = 2;
+}
+
+message SetTrackAlbum {
+    uint32 rowIndex = 1;
+    string album = 2;
+}
+
+enum KeyType {
+    KEY_TYPE_8B = 0;
+    KEY_TYPE_8A = 1;
+    KEY_TYPE_9B = 2;
+    KEY_TYPE_9A = 3;
+    KEY_TYPE_10B = 4;
+    KEY_TYPE_10A = 5;
+    KEY_TYPE_11B = 6;
+    KEY_TYPE_11A = 7;
+    KEY_TYPE_12B = 8;
+    KEY_TYPE_12A = 9;
+    KEY_TYPE_1B = 10;
+    KEY_TYPE_1A = 11;
+    KEY_TYPE_2B = 12;
+    KEY_TYPE_2A = 13;
+    KEY_TYPE_3B = 14;
+    KEY_TYPE_3A = 15;
+    KEY_TYPE_4B = 16;
+    KEY_TYPE_4A = 17;
+    KEY_TYPE_5B = 18;
+    KEY_TYPE_5A = 19;
+    KEY_TYPE_6B = 20;
+    KEY_TYPE_6A = 21;
+    KEY_TYPE_7B = 22;
+    KEY_TYPE_7A = 23;
+    KEY_TYPE_EMPTY = 24;
+}
+
+message SetTrackKey {
+    uint32 rowIndex = 1;
+    KeyType key = 2;
+}
+
+message SetTrackTempo {
+    uint32 rowIndex = 1;
+    optional uint32 tempo = 2;
+}
+
+message SetTrackTimeLength {
+    uint32 rowIndex = 1;
+    optional uint32 timeLengthSeconds = 2;
+}
+
+message SetTrackAlbumArt {
+    uint32 rowIndex = 1;
+    optional uint32 index = 2;
+}
+
+message SetTrackPlayOrder {
+    uint32 rowIndex = 1;
+    optional uint32 playOrder = 2;
+}
+
+message SetAlbumArtImage {
+    uint32 index = 1;
+    bytes image = 2;
+}
+
+enum FocusArea {
+    PLAYLISTS = 0;
+    TRACKLIST = 1;
+}
+
+message SetFocusArea {
+    FocusArea focusArea = 1;
+}
+
+enum Source {
+    ENGINE = 0;
+    COMPUTER = 1;
+}
+
+message LibraryInputSourceChanged {
+    Source source = 1;
+}
